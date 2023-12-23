@@ -1,7 +1,7 @@
 package StamatovTeam.filmorate20;
 
-import controllers.FilmController;
-import model.Film;
+import StamatovTeam.filmorate20.controllers.FilmController;
+import StamatovTeam.filmorate20.model.Film;
 import org.junit.jupiter.api.BeforeAll;
 
 import java.time.Duration;

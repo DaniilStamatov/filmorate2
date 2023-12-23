@@ -1,0 +1,20 @@
+package StamatovTeam.filmorate20.model;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+@Data
+@AllArgsConstructor
+public class Genre {
+    private Integer genreId;
+    private String genreName;
+
+    public static Genre makeGenre(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        return new Genre(id, name);
+    }
+}
