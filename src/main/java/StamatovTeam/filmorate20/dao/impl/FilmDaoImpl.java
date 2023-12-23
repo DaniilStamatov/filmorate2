@@ -7,8 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -42,10 +46,36 @@ public class FilmDaoImpl implements FilmDao {
     @Override
     public void addFilm(Film film) {
         String sql = "INSERT INTO film (name, description, mpa_id, release_date, duration, likes_amount) VALUES(?,?,?,?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sql, new String[] {"id"});
+            stmt.setString(1, film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setInt(3, film.getMpa().getId());
+            stmt.setDate(4, Date.valueOf(film.getReleaseDate()));
+            stmt.setInt(5, (int)film.getDuration().toSeconds());
+            stmt.setInt(6, 0);
+            return  stmt;
+        }, keyHolder);
+
+
     }
 
     @Override
     public Film updateFilm(Film film) {
-        return null;
+        String sql = "UPDATE film SET name = ?, description = ?, mpa_id = ?, release_date = ?, duration = ?, likes_amount = ? WHERE id = ?";
+        int updatedRows = jdbcTemplate.update(sql,
+                film.getName(),
+                film.getDescription(),
+                film.getMpa().getId(),
+                Date.valueOf(film.getReleaseDate()),
+                (int)film.getDuration().toSeconds(),
+                film.getLikesAmount());
+
+        if(updatedRows == 0){
+            log.debug("Фильм  с таким идентификатором {} не найден", film.getId());
+            throw new EntityDoesNotExistException(String.format("Фильм  с идентификатором %d не найден ", film.getId()));
+        }
+        return film;
     }
 }
