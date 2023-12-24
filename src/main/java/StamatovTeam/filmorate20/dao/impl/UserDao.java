@@ -21,7 +21,7 @@ public class UserDao implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public User addUser(User user) {
-        String sql = "INSERT INTO user (name, email, login, birthdate)VALUES(?,?,?,?)";
+        String sql = "INSERT INTO users (name, email, login, birthday)VALUES(?,?,?,?)";
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -32,7 +32,7 @@ public class UserDao implements UserStorage {
             stmt.setString(3,user.getLogin());
             stmt.setDate(4, Date.valueOf(user.getBirthday()));
             return stmt;
-        });
+        }, keyHolder);
 
         user.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
         return user;

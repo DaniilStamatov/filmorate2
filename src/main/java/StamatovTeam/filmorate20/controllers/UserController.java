@@ -27,11 +27,13 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable int id){
+        log.info("Получен GET запрос");
         return userService.getUser(id);
     }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user){
+        log.info("Получен POST запрос");
         return userService.addUser(user);
     }
 

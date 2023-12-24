@@ -50,7 +50,7 @@ public class FilmDaoImpl implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        String sql = "INSERT INTO film (name, description, mpa_id, release_date, duration, likes_amount) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO film (name, description, mpa, release_date, duration, likes_amount) VALUES(?,?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql, new String[] {"id"});
@@ -69,7 +69,7 @@ public class FilmDaoImpl implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        String sql = "UPDATE film SET name = ?, description = ?, mpa_id = ?, release_date = ?, duration = ?, likes_amount = ? WHERE id = ?";
+        String sql = "UPDATE film SET name = ?, description = ?, mpa = ?, release_date = ?, duration = ?, likes_amount = ? WHERE id = ?";
         int updatedRows = jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),

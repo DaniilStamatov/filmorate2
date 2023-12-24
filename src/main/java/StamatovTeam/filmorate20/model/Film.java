@@ -39,7 +39,7 @@ public class Film {
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
                 .duration(Duration.ofMillis(rs.getInt("duration")))
-                .mpa(new Mpa(rs.getInt("mpa_id")))
+                .mpa(new Mpa(rs.getInt("mpa")))
                 .likesAmount(rs.getInt("likes_amount"))
                 .build();
     }
