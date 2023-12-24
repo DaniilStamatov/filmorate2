@@ -3,6 +3,7 @@ package StamatovTeam.filmorate20.dao.impl;
 import StamatovTeam.filmorate20.dao.FilmDao;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import StamatovTeam.filmorate20.model.Film;
+import StamatovTeam.filmorate20.storage.film.FilmStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,12 +15,12 @@ import org.springframework.stereotype.Component;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Slf4j
 @Component
-
-public class FilmDaoImpl implements FilmDao {
+public class FilmDaoImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public Film getFilmById(Integer id) {
@@ -34,6 +35,10 @@ public class FilmDaoImpl implements FilmDao {
             log.debug("Фильм с данным id {} не найден" , id);
             throw new EntityDoesNotExistException(String.format("Фильм с id %d не существует", id));
         }
+    }
+
+    @Override
+    public void checkFilmExists(int id) {
 
     }
 
@@ -44,7 +49,7 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public void addFilm(Film film) {
+    public Film addFilm(Film film) {
         String sql = "INSERT INTO film (name, description, mpa_id, release_date, duration, likes_amount) VALUES(?,?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -58,7 +63,8 @@ public class FilmDaoImpl implements FilmDao {
             return  stmt;
         }, keyHolder);
 
-
+        film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+        return film;
     }
 
     @Override
@@ -78,4 +84,14 @@ public class FilmDaoImpl implements FilmDao {
         }
         return film;
     }
+
+    @Override
+    public Film removeFilm(Integer id) {
+        String sql = "DELETE FROM film WHERE id  = ?";
+        Film film = getFilmById(id);
+        jdbcTemplate.update(sql, id);
+        return film;
+    }
+
+
 }

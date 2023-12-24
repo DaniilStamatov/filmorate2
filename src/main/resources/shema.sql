@@ -1,13 +1,13 @@
 CREATE TABLE IF NOT EXISTS film
 (
-      id INTEGER AUTO_INCREMENT,
+      id integer GENERATED ALWAYS AS IDENTITY,
       name VARCHAR(100) NOT NULL,
       description VARCHAR(200) NOT NULL,
       mpa_id INTEGER NOT NULL,
       release_date DATE NOT NULL,
       duration INTEGER NOT NULL,
       likes_amount INTEGER,
-      CONSTRAINT film_pk PRIMARY KEY (film_id),
+      CONSTRAINT film_pk PRIMARY KEY (id),
       CONSTRAINT films_fk FOREIGN KEY (mpa_id) REFERENCES mpa
 );
 
@@ -19,21 +19,21 @@ CREATE TABLE IF NOT EXISTS mpa
       CONSTRAINT mpa_pk PRIMARY KEY (mpa_id)
 );
 
-CREATE TABLE IF NOT EXISTS user
+CREATE TABLE IF NOT EXISTS users
 (
-    user_id INTEGER AUTO_INCREMENT,
-    user_email VARCHAR(50) NOT  NULL,
-    user_name VARCHAR(50),
-    user_login VARCHAR(50) NOT NULL,
-    user_birthdate DATE,
-    CONSTRAINT user_pk PRIMARY KEY(user_id)
+    id integer GENERATED ALWAYS AS IDENTITY,
+    email VARCHAR(50) NOT  NULL,
+    name VARCHAR(50),
+    login VARCHAR(50) NOT NULL,
+    birthdate DATE,
+    CONSTRAINT user_pk PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS genre
 (
-    genre_id INTEGER AUTO_INCREMENT,
+    id integer GENERATED ALWAYS AS IDENTITY,
     genre_name VARCHAR(50),
-    CONSTRAINT genre_pk PRIMARY KEY(genre_id)
+    CONSTRAINT genre_pk PRIMARY KEY(id)
 );
 
 CREATE TABLE IF NOT EXISTS film_genre
@@ -48,15 +48,15 @@ CREATE TABLE IF NOT EXISTS friends
 (
     first_user_id INTEGER NOT NULL,
     second_user_id INTEGER NOT NULL,
-    CONSTRAINT first_user_fk FOREIGN KEY (first_user_id) REFERENCES user(user_id),
-    CONSTRAINT second_user_fk FOREIGN KEY (second_user_id) REFERENCES user(user_id)
+    CONSTRAINT first_user_fk FOREIGN KEY (first_user_id) REFERENCES users(id),
+    CONSTRAINT second_user_fk FOREIGN KEY (second_user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS likes
 (
     film_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    CONSTRAINT user_like_fk FOREIGN KEY(user_id) REFERENCES user(user_id),
-    CONSTRAINT film_like_fk FOREIGN KEY(film_id) REFERENCES film(film_id)
+    CONSTRAINT user_like_fk FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT film_like_fk FOREIGN KEY(film_id) REFERENCES film(id)
 );
 

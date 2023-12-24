@@ -1,5 +1,8 @@
 package StamatovTeam.filmorate20.service;
 
+import StamatovTeam.filmorate20.dao.FilmDao;
+import StamatovTeam.filmorate20.dao.FilmGenreDao;
+import StamatovTeam.filmorate20.dao.GenreDao;
 import StamatovTeam.filmorate20.exceptions.EntityAlreadyExistsException;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +22,17 @@ import java.util.stream.Collectors;
 public class FilmService {
     private final UserStorage userStorage;
     private final FilmStorage filmStorage;
+    private final FilmGenreDao filmGenreDao;
+    private final GenreDao genreDao;
+
 
     public Film addFilm(Film film){
-        return filmStorage.addFilm(film);
+
+        filmStorage.addFilm(film);
+        if(film.getGenres()!=null){
+            filmGenreDao.importFilmGenre(film);
+        }
+        return film;
     }
 
     public Film updateFilm(Film film){
@@ -33,14 +44,14 @@ public class FilmService {
     }
 
     public Film getFilm(Integer id){
-        return filmStorage.getFilm(id);
+        return filmStorage.getFilmById(id);
     }
 
     public void likeFilm(int id, int userId){
         filmStorage.checkFilmExists(id);
         userStorage.checkUserDoesExist(userId);
 
-        Film film = filmStorage.getFilm(id);
+        Film film = filmStorage.getFilmById(id);
         if(film.getLikes()==null){
             film.setLikes(new HashSet<>());
         }
@@ -55,7 +66,7 @@ public class FilmService {
     public void deleteLikeFromFilm(int id, int userId){
         filmStorage.checkFilmExists(id);
         userStorage.checkUserDoesExist(userId);
-        Film film = filmStorage.getFilm(id);
+        Film film = filmStorage.getFilmById(id);
         if(film.getLikes()==null){
             film.setLikes(new HashSet<>());
         }

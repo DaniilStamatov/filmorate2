@@ -14,7 +14,7 @@ public interface FilmStorage {
 
     Film removeFilm(Integer id);
 
-    Film getFilm(Integer id);
+    Film getFilmById(Integer id);
 
     void checkFilmExists(int id);
 }

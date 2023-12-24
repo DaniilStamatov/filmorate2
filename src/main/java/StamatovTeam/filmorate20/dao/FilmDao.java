@@ -12,4 +12,6 @@ public interface FilmDao {
     void addFilm(Film film);
 
     Film updateFilm(Film film);
+
+    Film removeFilm(int id);
 }

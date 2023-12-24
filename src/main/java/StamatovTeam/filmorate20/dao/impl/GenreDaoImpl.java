@@ -30,13 +30,13 @@ public class GenreDaoImpl implements GenreDao {
                 log.info("Найден жанр c id: {}, name = {}", mpa.getGenreId(), mpa.getGenreName());
             }
             return mpa;
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e){
             log.info("Жанр с таким id {} не существует ", id);
             throw new EntityDoesNotExistException(String.format("Такого жанра не существует %d", id));
         }
-
-
     }
+
+
 
     @Override
     public List<Genre> getAllGenres() {
