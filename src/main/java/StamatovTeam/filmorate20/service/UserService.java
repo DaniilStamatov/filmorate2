@@ -1,5 +1,6 @@
 package StamatovTeam.filmorate20.service;
 
+import StamatovTeam.filmorate20.dao.FriendshipDao;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import StamatovTeam.filmorate20.exceptions.EntityAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserService {
     private final UserStorage userStorage;
+    private final FriendshipDao friendshipStorage;
 
     public  User addUser(User user){
         setUserNameIfNeeded(user);
@@ -41,77 +43,21 @@ public class UserService {
     public void addToFriends(int id, int friendId){
         userStorage.checkUserDoesExist(id);
         userStorage.checkUserDoesExist(friendId);
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-
-
-        if(user.getFriends()==null){
-            user.setFriends(new HashSet<>());
-        }
-
-        if(!user.getFriends().add(friendId)){
-            throw new EntityAlreadyExistsException("Пользователи уже в друзьях");
-        }
-
-        if(friend.getFriends()==null){
-            friend.setFriends(new HashSet<>());
-        }
-
-        friend.getFriends().add(id);
+        userStorage.getUser(id);
+        userStorage.getUser(friendId);
+        friendshipStorage.addFriends(id, friendId);
     }
 
     public void deleteUsersFromFriends(int id, int friendId){
-        userStorage.checkUserDoesExist(id);
-        userStorage.checkUserDoesExist(friendId);
-
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-
-        if(user.getFriends()==null){
-            user.setFriends(new HashSet<>());
-        }
-
-        if(friend.getFriends()==null){
-            friend.setFriends(new HashSet<>());
-        }
-
-        if(!user.getFriends().remove(friendId)){
-            throw new EntityDoesNotExistException("Пользователи не в друзьях");
-        }
-
-        friend.getFriends().remove(id);
+            friendshipStorage.deleteFriend(id, friendId);
     }
 
     public List<User> getMutualFriends(int id, int friendId){
-        userStorage.checkUserDoesExist(id);
-        userStorage.checkUserDoesExist(friendId);
-
-        User user = userStorage.getUser(id);
-        User friend = userStorage.getUser(friendId);
-
-        Set<Integer> userFriends = userStorage.getUser(id).getFriends();
-        Set<Integer> friendFriends = userStorage.getUser(friendId).getFriends();
-
-        if(userFriends ==null){
-            return new ArrayList<>();
-        }
-
-        return userFriends.stream()
-                .filter(friendFriends::contains)
-                .map(userStorage::getUser)
-                .collect(Collectors.toList());
+       return friendshipStorage.getMutualFriends(id, friendId);
     }
 
     public List<User> getUserFriends(int id){
-        userStorage.checkUserDoesExist(id);
-        Set<Integer> userFriends = userStorage.getUser(id).getFriends();
-        if(userFriends ==null){
-            return new ArrayList<>();
-        }
-
-        return userFriends.stream()
-                .map(userStorage::getUser)
-                .collect(Collectors.toList());
+       return friendshipStorage.getAllFriends(id);
     }
 
     public User getUser(Integer id){

@@ -43,6 +43,12 @@ public class FilmController {
         filmService.deleteLikeFromFilm(id,userId);
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable int id){
+        log.info("Получен DELETE запрос на удаление фильма с id {}", id);
+        filmService.removeFilm(id);
+    }
+
     @GetMapping("/popular")
     public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count){
         log.info(String.format("Получен Get запрос '/films/popular?count=%d'", count));

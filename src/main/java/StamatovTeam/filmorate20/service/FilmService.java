@@ -3,6 +3,7 @@ package StamatovTeam.filmorate20.service;
 import StamatovTeam.filmorate20.dao.FilmDao;
 import StamatovTeam.filmorate20.dao.FilmGenreDao;
 import StamatovTeam.filmorate20.dao.GenreDao;
+import StamatovTeam.filmorate20.dao.MpaDao;
 import StamatovTeam.filmorate20.exceptions.EntityAlreadyExistsException;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final FilmGenreDao filmGenreDao;
     private final GenreDao genreDao;
+    private final MpaDao mpaDao;
 
 
     public Film addFilm(Film film){
@@ -44,7 +46,9 @@ public class FilmService {
     }
 
     public Film getFilm(Integer id){
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        film.setMpa(mpaDao.findById(film.getMpa().getId()));
+        return film;
     }
 
     public void likeFilm(int id, int userId){
@@ -79,7 +83,12 @@ public class FilmService {
     }
 
     public List<Film> getAllFilms(){
-        return filmStorage.getFilms();
+
+        List<Film> films = filmStorage.getFilms();
+        films.forEach(film -> {
+            film.setMpa(mpaDao.findById(film.getMpa().getId()));
+        });
+        return films;
     }
 
     public List<Film> getMostLikedFilms(int size){

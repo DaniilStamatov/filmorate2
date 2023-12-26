@@ -4,6 +4,7 @@ drop table if exists mpa cascade;
 drop table if exists likes cascade;
 drop table if exists users cascade;
 drop table if exists film_genre cascade;
+drop table if exists friends cascade;
 
 CREATE TABLE IF NOT EXISTS mpa
 (
@@ -57,8 +58,10 @@ CREATE TABLE IF NOT EXISTS friends
 (
     first_user_id INTEGER NOT NULL,
     second_user_id INTEGER NOT NULL,
-    CONSTRAINT first_user_fk FOREIGN KEY (first_user_id) REFERENCES users(id),
-    CONSTRAINT second_user_fk FOREIGN KEY (second_user_id) REFERENCES users(id)
+    constraint FRIENDSHIP_PK
+        primary key (first_user_id, second_user_id),
+    CONSTRAINT first_user_fk FOREIGN KEY (first_user_id) REFERENCES users(id) on update cascade on delete cascade,
+    CONSTRAINT second_user_fk FOREIGN KEY (second_user_id) REFERENCES users(id) on update cascade on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS likes

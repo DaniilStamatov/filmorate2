@@ -7,6 +7,6 @@ import java.util.List;
 
 @Component
 public interface MpaDao {
-    String findById(Integer id);
+    Mpa findById(Integer id);
     List<Mpa> findAll();
 }
