@@ -1,5 +1,7 @@
 package StamatovTeam.filmorate20.model;
 
+import StamatovTeam.filmorate20.util.DurationPositiveOrZero;
+import StamatovTeam.filmorate20.util.FilmDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -24,12 +26,14 @@ public class Film {
     private String name;
     @Size(max = 200, message = "Длина описания не должна превышать 200 символов")
     private String description;
+    @FilmDate
     private LocalDate releaseDate;
 
+    @DurationPositiveOrZero
     private Duration duration;
     private Mpa mpa;
     private List<Genre> genres;
-    private Set<Integer> likes;
+    private List<User> likes;
     private int likesAmount;
 
     public static Film makeFilm(ResultSet rs) throws SQLException {
@@ -38,7 +42,7 @@ public class Film {
                 .name(rs.getString("name"))
                 .description(rs.getString("description"))
                 .releaseDate(rs.getDate("release_date").toLocalDate())
-                .duration(Duration.ofMillis(rs.getInt("duration")))
+                .duration(Duration.ofSeconds(rs.getInt("duration")))
                 .mpa(new Mpa(rs.getInt("mpa")))
                 .likesAmount(rs.getInt("likes_amount"))
                 .build();

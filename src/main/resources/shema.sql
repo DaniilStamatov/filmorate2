@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS film_genre
 (
     film_id INTEGER NOT NULL,
     genre_id INTEGER NOT NULL,
-    CONSTRAINT film_fk FOREIGN KEY (film_id) REFERENCES film,
-    CONSTRAINT genre_fk FOREIGN KEY (genre_id) REFERENCES genre
+    CONSTRAINT film_fk FOREIGN KEY (film_id) REFERENCES film on update cascade on delete cascade,
+    CONSTRAINT genre_fk FOREIGN KEY (genre_id) REFERENCES genre on update cascade on delete cascade
 );
 
 CREATE TABLE IF NOT EXISTS friends

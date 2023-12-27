@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FilmGenreDao {
 
-    Genre getFilmGenre(int id);
+    List<Genre> getFilmGenre(int id);
 
     Film importFilmGenre(Film film);
 

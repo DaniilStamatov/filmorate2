@@ -32,7 +32,11 @@ public class UserService {
     }
 
     public List<User> getUsers(){
-        return userStorage.getUsers();
+        List<User> users = userStorage.getUsers();
+        users.forEach(user->{
+            user.setFriends(friendshipStorage.getAllFriends(user.getId()));
+        });
+        return users;
     }
 
     public User removeUser(Integer id){

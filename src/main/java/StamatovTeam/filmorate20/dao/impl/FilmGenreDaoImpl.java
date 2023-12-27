@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class FilmGenreDaoImpl implements FilmGenreDao {
     private final JdbcTemplate jdbcTemplate;
     @Override
-    public Genre getFilmGenre(int id) {
-        String sql = "SELECT g.id, g.name FROM film_genre as fg JOIN genre as g ON fg.genre_id = g.id";
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum)-> Genre.makeGenre(rs));
+    public List<Genre> getFilmGenre(int id) {
+        String sql = "SELECT g.id, g.genre_name FROM film_genre as fg JOIN genre as g ON fg.genre_id = g.id WHERE fg.film_id = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum)-> Genre.makeGenre(rs), id);
     }
 
     @Override
@@ -35,8 +35,8 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
            @Override
            public void setValues(PreparedStatement ps, int i) throws SQLException {
-               ps.setInt(0,film.getId());
-               ps.setInt(1,filmGenres.get(i).getGenreId());
+               ps.setInt(1,film.getId());
+               ps.setInt(2,filmGenres.get(i).getGenreId());
            }
 
            @Override

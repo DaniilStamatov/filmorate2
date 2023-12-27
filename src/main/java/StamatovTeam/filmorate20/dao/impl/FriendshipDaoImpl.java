@@ -39,7 +39,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
     @Override
     public void deleteFriend(int user1, int user2) {
         String sql = "MERGE INTO friends AS F USING (VALUES(?, ?)) AS S(friend1, friend2) ON " +
-                "F.first_name_id = S.friend1 and F.second_name_id = S.friend2 " +
+                "F.first_user_id = S.friend1 and F.second_user_id = S.friend2 " +
                 "WHEN MATCHED THEN DELETE";
         jdbcTemplate.update(sql, user1, user2);
     }

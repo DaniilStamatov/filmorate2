@@ -1,3 +1,11 @@
+insert into GENRE(GENRE_NAME)
+values  ('Комедия'),
+        ('Драма'),
+        ('Мультфильм'),
+        ('Триллер'),
+        ('Документальный'),
+        ('Боевик');
+
 insert into MPA(id, name)
 values  (1, 'G'),
         (2, 'PG'),

@@ -1,9 +1,6 @@
 package StamatovTeam.filmorate20.service;
 
-import StamatovTeam.filmorate20.dao.FilmDao;
-import StamatovTeam.filmorate20.dao.FilmGenreDao;
-import StamatovTeam.filmorate20.dao.GenreDao;
-import StamatovTeam.filmorate20.dao.MpaDao;
+import StamatovTeam.filmorate20.dao.*;
 import StamatovTeam.filmorate20.exceptions.EntityAlreadyExistsException;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final FilmGenreDao filmGenreDao;
     private final GenreDao genreDao;
+    private final LikeDao likeDao;
     private final MpaDao mpaDao;
 
 
@@ -48,38 +46,21 @@ public class FilmService {
     public Film getFilm(Integer id){
         Film film = filmStorage.getFilmById(id);
         film.setMpa(mpaDao.findById(film.getMpa().getId()));
+        film.setLikes(likeDao.getAllFilmLikes(id));
+        film.setGenres(filmGenreDao.getFilmGenre(id));
         return film;
     }
 
-    public void likeFilm(int id, int userId){
-        filmStorage.checkFilmExists(id);
-        userStorage.checkUserDoesExist(userId);
-
-        Film film = filmStorage.getFilmById(id);
-        if(film.getLikes()==null){
-            film.setLikes(new HashSet<>());
-        }
-        if(film.getLikes().contains(userId)){
-            throw new EntityAlreadyExistsException("Пользователь уже поставил лайк");
-        }
-
-        film.getLikes().add(userId);
-        film.setLikesAmount(film.getLikes().size());
+    public void likeFilm(int filmId, int userId){
+        userStorage.getUser(userId);
+        filmStorage.getFilmById(filmId);
+        likeDao.addLike(filmId, userId);
     }
 
     public void deleteLikeFromFilm(int id, int userId){
         filmStorage.checkFilmExists(id);
         userStorage.checkUserDoesExist(userId);
-        Film film = filmStorage.getFilmById(id);
-        if(film.getLikes()==null){
-            film.setLikes(new HashSet<>());
-        }
-        if(!film.getLikes().contains(userId)){
-            throw new EntityDoesNotExistException("Пользователь не ставил лайк этому фильму");
-        }
-
-        film.getLikes().remove(userId);
-        film.setLikesAmount(film.getLikes().size());
+        likeDao.deleteLike(id, userId);
     }
 
     public List<Film> getAllFilms(){
@@ -87,6 +68,8 @@ public class FilmService {
         List<Film> films = filmStorage.getFilms();
         films.forEach(film -> {
             film.setMpa(mpaDao.findById(film.getMpa().getId()));
+            film.setLikes(likeDao.getAllFilmLikes(film.getId()));
+            film.setGenres(filmGenreDao.getFilmGenre(film.getId()));
         });
         return films;
     }

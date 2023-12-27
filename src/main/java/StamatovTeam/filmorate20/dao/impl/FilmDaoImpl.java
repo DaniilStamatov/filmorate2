@@ -69,14 +69,14 @@ public class FilmDaoImpl implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        String sql = "UPDATE film SET name = ?, description = ?, mpa = ?, release_date = ?, duration = ?, likes_amount = ? WHERE id = ?";
+        String sql = "UPDATE film SET name = ?, description = ?, mpa = ?, release_date = ?, duration = ? WHERE id = ?";
         int updatedRows = jdbcTemplate.update(sql,
                 film.getName(),
                 film.getDescription(),
                 film.getMpa().getId(),
                 Date.valueOf(film.getReleaseDate()),
-                (int)film.getDuration().toSeconds(),
-                film.getLikesAmount());
+                (int)film.getDuration().toSeconds(), film.getId());
+
 
         if(updatedRows == 0){
             log.debug("Фильм  с таким идентификатором {} не найден", film.getId());

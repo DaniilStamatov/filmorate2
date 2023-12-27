@@ -22,7 +22,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class UserDaoImpl implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final FriendshipDao friendshipDao;
     @Override
     public User addUser(User user) {
         String sql = "INSERT INTO users (name, email, login, birthday)VALUES(?,?,?,?)";
@@ -44,7 +43,7 @@ public class UserDaoImpl implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        String sql  = "UPDATE users SET name = ? , email = ? login = ? , birthday = ? WHERE id =?";
+        String sql  = "UPDATE users SET name = ? , email = ? , login = ? , birthday = ? WHERE id =?";
         int updatedRows = jdbcTemplate.update(sql, user.getName(),  user.getEmail(), user.getLogin(), Date.valueOf(user.getBirthday()), user.getId());
 
         if(updatedRows == 0) {
