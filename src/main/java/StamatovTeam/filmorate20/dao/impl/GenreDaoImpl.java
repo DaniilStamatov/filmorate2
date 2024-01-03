@@ -9,10 +9,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.xml.transform.Result;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 @Slf4j
 @Component
@@ -27,7 +23,7 @@ public class GenreDaoImpl implements GenreDao {
         try{
             Genre mpa = jdbcTemplate.queryForObject(sql,(rs, rowNum)-> Genre.makeGenre(rs), id);
             if(mpa!= null){
-                log.info("Найден жанр c id: {}, name = {}", mpa.getGenreId(), mpa.getGenreName());
+                log.info("Найден жанр c id: {}, name = {}", mpa.getId(), mpa.getName());
             }
             return mpa;
         } catch (EmptyResultDataAccessException e){

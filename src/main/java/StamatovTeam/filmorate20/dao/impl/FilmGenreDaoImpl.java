@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +19,7 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
     private final JdbcTemplate jdbcTemplate;
     @Override
     public List<Genre> getFilmGenre(int id) {
-        String sql = "SELECT g.id, g.genre_name FROM film_genre as fg JOIN genre as g ON fg.genre_id = g.id WHERE fg.film_id = ?";
+        String sql = "SELECT g.id, g.name FROM film_genre as fg JOIN genre as g ON fg.genre_id = g.id WHERE fg.film_id = ?";
         return jdbcTemplate.query(sql, (rs, rowNum)-> Genre.makeGenre(rs), id);
     }
 
@@ -32,11 +31,12 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
                 .distinct()
                 .toList();
 
-       jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+       jdbcTemplate.batchUpdate(sql,
+               new BatchPreparedStatementSetter() {
            @Override
            public void setValues(PreparedStatement ps, int i) throws SQLException {
                ps.setInt(1,film.getId());
-               ps.setInt(2,filmGenres.get(i).getGenreId());
+               ps.setInt(2,filmGenres.get(i).getId());
            }
 
            @Override
@@ -44,6 +44,8 @@ public class FilmGenreDaoImpl implements FilmGenreDao {
                return filmGenres.size();
            }
        });
+
+       film.setGenres(filmGenres);
        return film;
     }
 

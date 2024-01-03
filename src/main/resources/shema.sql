@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS genre
 (
     id integer not null auto_increment,
-    genre_name VARCHAR(50),
+    name VARCHAR(50),
     CONSTRAINT genre_pk PRIMARY KEY(id)
 );
 

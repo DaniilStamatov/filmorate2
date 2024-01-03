@@ -81,4 +81,9 @@ public class InMemoryFilmStorage implements FilmStorage{
             throw new InvalidPathVariableOrParameterException("id", exceptionMessage);
         }
     }
+
+    @Override
+    public List<Film> getMostLikedFilms(int limit) {
+        return null;
+    }
 }

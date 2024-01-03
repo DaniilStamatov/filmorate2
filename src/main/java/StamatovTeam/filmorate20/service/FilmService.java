@@ -1,8 +1,9 @@
 package StamatovTeam.filmorate20.service;
 
 import StamatovTeam.filmorate20.dao.*;
-import StamatovTeam.filmorate20.exceptions.EntityAlreadyExistsException;
-import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
+import StamatovTeam.filmorate20.model.FilmGenre;
+import StamatovTeam.filmorate20.model.Genre;
+import StamatovTeam.filmorate20.model.Mpa;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import StamatovTeam.filmorate20.model.Film;
@@ -10,8 +11,7 @@ import org.springframework.stereotype.Service;
 import StamatovTeam.filmorate20.storage.film.FilmStorage;
 import StamatovTeam.filmorate20.storage.user.UserStorage;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,6 +66,37 @@ public class FilmService {
     public List<Film> getAllFilms(){
 
         List<Film> films = filmStorage.getFilms();
+        List<FilmGenre> filmGenres = filmGenreDao.getAllGenres();
+
+        Map<Integer, Genre> mapGenre = genreDao.getAllGenres()
+                        .stream()
+                        .collect(Collectors.toMap(Genre::getId, thisGenre-> thisGenre));
+
+
+        Map<Integer, Mpa> mapMpa = mpaDao.findAll()
+                        .stream()
+                        .collect(Collectors.toMap(Mpa::getId, thisMpa-> thisMpa));
+
+        Map<Integer, List<Genre>> mappedGenres = new HashMap<>();
+
+        for(FilmGenre filmGenre : filmGenres){
+            if(!mappedGenres.containsKey(filmGenre.getFilmId())){
+                mappedGenres.put(filmGenre.getFilmId(), new ArrayList<>());
+            }
+            mappedGenres.get(filmGenre.getFilmId()).add(mapGenre.get(filmGenre.getGenreId()));
+        }
+
+        films.forEach(film -> {
+            film.setMpa(mapMpa.get(film.getMpa().getId()));
+            film.setGenres(mappedGenres.getOrDefault(film.getId(),new ArrayList<>()));
+            film.setLikes(likeDao.getAllFilmLikes(film.getId()));
+
+        });
+        return films;
+    }
+
+    public List<Film> getMostLikedFilms(int size){
+        List<Film> films = filmStorage.getMostLikedFilms(size);
         films.forEach(film -> {
             film.setMpa(mpaDao.findById(film.getMpa().getId()));
             film.setLikes(likeDao.getAllFilmLikes(film.getId()));
@@ -74,14 +105,4 @@ public class FilmService {
         return films;
     }
 
-    public List<Film> getMostLikedFilms(int size){
-        if(filmStorage.getFilms().isEmpty()){
-            return null;
-        }
-
-        return filmStorage.getFilms().stream()
-                .sorted((o1,o2)-> o2.getLikesAmount()-o1.getLikesAmount())
-                .limit(size)
-                .collect(Collectors.toList());
-    }
 }

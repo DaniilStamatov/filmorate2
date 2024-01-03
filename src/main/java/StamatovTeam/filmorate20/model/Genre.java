@@ -9,8 +9,8 @@ import java.sql.SQLException;
 @Data
 @AllArgsConstructor
 public class Genre {
-    private Integer genreId;
-    private String genreName;
+    private Integer id;
+    private String name;
 
     public static Genre makeGenre(ResultSet rs) throws SQLException {
         int id = rs.getInt("id");

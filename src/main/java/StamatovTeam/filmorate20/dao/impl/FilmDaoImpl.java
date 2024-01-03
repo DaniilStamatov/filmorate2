@@ -1,6 +1,7 @@
 package StamatovTeam.filmorate20.dao.impl;
 
 import StamatovTeam.filmorate20.dao.FilmDao;
+import StamatovTeam.filmorate20.dao.FilmGenreDao;
 import StamatovTeam.filmorate20.exceptions.EntityDoesNotExistException;
 import StamatovTeam.filmorate20.model.Film;
 import StamatovTeam.filmorate20.storage.film.FilmStorage;
@@ -22,6 +23,7 @@ import java.util.Objects;
 @Component
 public class FilmDaoImpl implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final FilmGenreDao filmGenreDao;
     @Override
     public Film getFilmById(Integer id) {
         String sql = "SELECT * FROM film WHERE id = ?";
@@ -40,6 +42,16 @@ public class FilmDaoImpl implements FilmStorage {
     @Override
     public void checkFilmExists(int id) {
 
+    }
+
+    @Override
+    public List<Film> getMostLikedFilms(int limit) {
+        String sql = "SELECT id, name, description, mpa, release_date, duration, likes_amount " +
+                "FROM film" +
+                " ORDER BY likes_amount DESC" +
+                " LIMIT ?";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> Film.makeFilm(rs), limit);
     }
 
     @Override
@@ -81,6 +93,15 @@ public class FilmDaoImpl implements FilmStorage {
         if(updatedRows == 0){
             log.debug("Фильм  с таким идентификатором {} не найден", film.getId());
             throw new EntityDoesNotExistException(String.format("Фильм  с идентификатором %d не найден ", film.getId()));
+        }
+
+        if(film.getGenres()!=null){
+            filmGenreDao.deleteFilmGenresByFilmId(film.getId());
+            filmGenreDao.importFilmGenre(film);
+        } else{
+            if(filmGenreDao.getFilmGenre(film.getId())!=null){
+                film.setGenres(filmGenreDao.getFilmGenre(film.getId()));
+            }
         }
         return film;
     }

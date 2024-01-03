@@ -17,4 +17,6 @@ public interface FilmStorage {
     Film getFilmById(Integer id);
 
     void checkFilmExists(int id);
+
+    List<Film> getMostLikedFilms(int limit);
 }

@@ -14,4 +14,6 @@ public interface FilmDao {
     Film updateFilm(Film film);
 
     Film removeFilm(int id);
+
+    Film getMostPopularFilm(int limit);
 }

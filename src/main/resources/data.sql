@@ -1,4 +1,4 @@
-insert into GENRE(GENRE_NAME)
+insert into GENRE(NAME)
 values  ('Комедия'),
         ('Драма'),
         ('Мультфильм'),
